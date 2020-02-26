@@ -25,7 +25,27 @@ object Request {
          |UPDATE $db.crawler_logs
          |SET
          |STATUS=${JobStatus.STARTED.toString},
-         |START_TIME=${LocalDateTime.now}
+         |STARTTIME=${LocalDateTime.now}
+         |WHERE ID=$id
+       """.stripMargin
+  }
+
+  private[db] def updateSuccessfulRequest(id: Long)(implicit db: SQLSyntax): SQL[Nothing, NoExtractor] = {
+    sql"""
+         |UPDATE $db.crawler_logs
+         |SET
+         |STATUS=${JobStatus.SUCCESSFUL.toString},
+         |ENDTIME=${LocalDateTime.now}
+         |WHERE ID=$id
+       """.stripMargin
+  }
+
+  private[db] def updateFailedRequest(id: Long)(implicit db: SQLSyntax): SQL[Nothing, NoExtractor] = {
+    sql"""
+         |UPDATE $db.crawler_logs
+         |SET
+         |STATUS=${JobStatus.FAILED.toString},
+         |ENDTIME=${LocalDateTime.now}
          |WHERE ID=$id
        """.stripMargin
   }
@@ -44,5 +64,5 @@ case class Request(id: Long,
                    username: String = "",
                    operation: String,
                    path: String,
-                   dataSource: DataSource.Value = DataSource.EXT4,
+                   dataSource: DataSource.Value = DataSource.APFS,
                   )

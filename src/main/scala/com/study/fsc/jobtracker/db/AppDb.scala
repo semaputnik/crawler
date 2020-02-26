@@ -19,6 +19,24 @@ class AppDb(options: DbOptions) {
       Request.getPendingByDataSource(dataSource).map(Request.apply).list()()
     }
   }
+
+  def logStartProcessing(id: Long): Unit = {
+    NamedDB("APP_DB") autoCommit  { implicit session =>
+      Request.updateStartedRequest(id).update()()
+    }
+  }
+
+  def logSuccessfulProcessing(id: Long): Unit = {
+    NamedDB("APP_DB") autoCommit  { implicit session =>
+      Request.updateSuccessfulRequest(id).update()()
+    }
+  }
+
+  def logFailedProcessing(id: Long): Unit = {
+    NamedDB("APP_DB") autoCommit  { implicit session =>
+      Request.updateFailedRequest(id).update()()
+    }
+  }
 }
 
 case class DbOptions(connectionString: String = "",
